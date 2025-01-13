@@ -48,8 +48,14 @@ python bot.py
 - 1.0.0: Initial release.
 - 1.0.1: Added the ability to skip songs.
 - 1.0.2: Added the ability to delete files after songs end.
-- 1.0.3: Added new `stop` command, command descriptions; and improved YT-DLP options for greater stability.
+- 1.0.3:
+  - Added new `stop` command & command descriptions
+  - Improved YT-DLP options for greater stability.
+  - Disabled playlists from attempting to queue everything at once, which breaks the bot.
 - 1.0.4: Added new bot status messages, combined `disconnect` with `stop`.
+- 1.0.5:
+  - Fixed some race conditions, skip command, and command layout.
+  - Added more error handling, & status improvements.
 
 ## <a id="terms"></a>Terms
 This script is for educational purposes only. Use it at your own risk. The developer is not responsible for any damage caused by the misuse of this script.
