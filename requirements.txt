@@ -1,3 +1,4 @@
 yt-dlp
 pynacl
 discord.py
+audioop-lts

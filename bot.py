@@ -7,7 +7,7 @@ import concurrent.futures
 import string
 import random
 
-TOKEN = 'YOUR BOT TOKEN'
+TOKEN = os.environ["DISCORD_TOKEN"]
 
 disconnect = 0
 intents = discord.Intents.all()
@@ -45,13 +45,21 @@ def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
+ydl_opts = {
+    'noplaylist': True,
+    'playlist_items': 1,
+    'format': 'bestaudio/best[ext=webm]/best',
+    'outtmpl': f'downloads/%(id)s_{generate_random_string(5)}.%(ext)s',
+    'extractor_args': {
+        'youtube': {
+            'player_client': ['tv']
+        }
+    },
+    'youtube_include_hls_manifest': True,
+    'check_formats': 'selected',
+}
+
 def download_and_convert(url):
-
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': f'downloads/%(id)s_{generate_random_string(5)}.%(ext)s',
-    }
-
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         audio_file = ydl.prepare_filename(info)
@@ -67,7 +75,9 @@ def download_and_convert(url):
 
     return audio_file, info_file
 
-@bot.tree.command()
+@bot.tree.command(
+    name="play",
+    description="Adds an item to the queue.")
 async def play(interaction: discord.Interaction, url: str):
     global disconnect
     disconnect = 0
@@ -97,7 +107,7 @@ async def play(interaction: discord.Interaction, url: str):
         )
         await interaction.response.send_message(embed=embed)
     else:
-        with yt_dlp.YoutubeDL({}) as ydl:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             embed = discord.Embed(
                 title="Currently Playing:",
@@ -121,7 +131,21 @@ async def play(interaction: discord.Interaction, url: str):
             if not voice_client.is_playing():
                 await play_next(interaction)
 
-@bot.tree.command()
+@bot.tree.command(
+    name="stop",
+    description="Stops all currently playing music.")
+async def stop(interaction: discord.Interaction):
+    voice_client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
+
+    if interaction.user.voice and voice_client:
+        global song_queue
+        song_queue = asyncio.Queue()
+        voice_client.stop()
+        await interaction.response.send_message(embed=discord.Embed(description="Stopping all playback.", color=discord.Color.yellow()))
+
+@bot.tree.command(
+    name="skip",
+    description="Skips the current item in queue.")
 async def skip(interaction: discord.Interaction):
     voice_client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
     
@@ -130,7 +154,7 @@ async def skip(interaction: discord.Interaction):
             await interaction.response.send_message(embed=discord.Embed(description="There is no music in the queue.", color=discord.Color.red()))
         else:
             voice_client.stop()
-            await interaction.response.send_message(embed=discord.Embed(description="Next song.", color=discord.Color.blue()))
+            await interaction.response.send_message(embed=discord.Embed(description="Next song.", color=discord.Color.green()))
 
             currently_playing = await song_queue.get()
             print(currently_playing)
@@ -139,7 +163,9 @@ async def skip(interaction: discord.Interaction):
     else:
         await interaction.response.send_message(embed=discord.Embed(description="The bot is not connected to a voice channel.", color=discord.Color.red()))
 
-@bot.tree.command()
+@bot.tree.command(
+    name="disconnect",
+    description="Stops currently playing music and disconnects from the call.")
 async def disconnect(interaction: discord.Interaction):
     voice_client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
     

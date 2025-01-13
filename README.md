@@ -1,61 +1,56 @@
-i don't know if i will update it, because it still work
+## Quick Navigation
+- [Commands](#commands)
+- [Notes](#notes)
+- [Installation](#Install)
+- [Changelog](#changelog)
+- [Terms](#terms)
 
-## 🌐 〢 Content
-- [🤖・Features](#features)
-- [👁️・Features Explanation](#explanation)
-- [🔎・How to install](#Install)
-- [📝・Changelog](#changelog)
-- [💼・Term](#terms)
+## <a id="commands"></a>Commands
+- Play: The play command takes a YouTube URL as an argument and plays the song in the voice channel that the bot is connected to.
+- Disconnect: The disconnect command disconnects the bot from the voice channel.
+- Skip: The skip command skips the current song.
+- Stop: Stops the current playback in the connected channel.
 
+## <a id="notes"></a>Notes
+The bot will automatically delete the cached file of a played song after it ends. This is to prevent the file from taking up too much space on the bot's hard drive.
 
-## <a id="features"></a>🤖・Features
-Play music: You can use the play command to play a song from YouTube.
+## <a id="Install"></a>Installation
 
-Disconnect command: You can use the disconnect command to disconnect the bot from the voice channel.
+### Intents
 
-Skip command: You can use the skip command to skip the current song.
+Please make sure that the following intents are enabled under `Bot` settings in the discord developer portal for your application:
+- Presence
+- Server Members
+- Message Content 
 
-Delete file after song end: The bot will automatically delete the file of the played song after it ends.
+### System Requirements
+- Python 3.11 or newer
+- FFMPEG
 
-## <a id="explanation"></a>👁️・Features Explanation
-Play music: The play command takes a YouTube URL as an argument and plays the song in the voice channel that the bot is connected to.
+### Dependencies
 
-Disconnect command: The disconnect command disconnects the bot from the voice channel.
-
-Skip command: The skip command skips the current song.
-
-Delete file after song end: The bot will automatically delete the file of the played song after it ends. This is to prevent the file from taking up too much space on the bot's hard drive.
-
-## <a id="Install"></a>🔎・How to install
-The discord must have those intent enabled
-
-Presence, Server Members, Message Content 
-
-Install Python 3.11
-
-You must have FFmpeg downloaded
-
-Clone this repository.
-
-Install the dependencies:
+To install dependencies, use the following command:
 ```py
 pip install -r requirements.txt
 ```
 
-Put the bot token into the code
+### Setup
 
-Run the bot:
-
-```py
+1. Set the environment variable `DISCORD_TOKEN` to your bot token:
+```sh
+DISCORD_TOKEN="your token here"
+```
+2. Run the bot with:
+```sh
 python bot.py
 ```
 
+## <a id="changelog"></a>Changelog
+- 1.0.0: Initial release.
+- 1.0.1: Added the ability to skip songs.
+- 1.0.2: Added the ability to delete files after songs end.
+- 1.0.3: Added new `stop` command, command descriptions; and improved YT-DLP options for greater stability.
 
-## <a id="changelog"></a>📝・Changelog
-1.0.0: Initial release.
-1.0.1: Added the ability to skip songs.
-1.0.2: Added the ability to delete files after songs end.
-
-## <a id="terms"></a>💼・Terms
+## <a id="terms"></a>Terms
 This script is for educational purposes only. Use it at your own risk. The developer is not responsible for any damage caused by the misuse of this script.
 
