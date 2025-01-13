@@ -6,6 +6,7 @@ import asyncio
 import concurrent.futures
 import string
 import random
+import atexit
 
 TOKEN = os.environ["DISCORD_TOKEN"]
 
@@ -19,7 +20,7 @@ song_queue = asyncio.Queue()
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-
+    await bot.change_presence(status=discord.Status.idle, activity=discord.Game('that old record on the shelf'))
 
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -83,7 +84,7 @@ async def play(interaction: discord.Interaction, url: str):
     disconnect = 0
 
     if not interaction.user.voice:
-        await interaction.response.send_message("You are not connected to a voice channel.")
+        await interaction.response.send_message(embed=discord.Embed(description="You are not connected to any voice channel.", color=discord.Color.red()))
         return
 
     voice_channel = interaction.user.voice.channel
@@ -94,6 +95,8 @@ async def play(interaction: discord.Interaction, url: str):
         voice_client = await voice_channel.connect()
     else:
         voice_client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
+
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game('a song in #'+voice_channel.name))
 
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=8)
     if voice_client.is_playing() or not song_queue.empty():
@@ -131,17 +134,6 @@ async def play(interaction: discord.Interaction, url: str):
             if not voice_client.is_playing():
                 await play_next(interaction)
 
-@bot.tree.command(
-    name="stop",
-    description="Stops all currently playing music.")
-async def stop(interaction: discord.Interaction):
-    voice_client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
-
-    if interaction.user.voice and voice_client:
-        global song_queue
-        song_queue = asyncio.Queue()
-        voice_client.stop()
-        await interaction.response.send_message(embed=discord.Embed(description="Stopping all playback.", color=discord.Color.yellow()))
 
 @bot.tree.command(
     name="skip",
@@ -154,18 +146,18 @@ async def skip(interaction: discord.Interaction):
             await interaction.response.send_message(embed=discord.Embed(description="There is no music in the queue.", color=discord.Color.red()))
         else:
             voice_client.stop()
-            await interaction.response.send_message(embed=discord.Embed(description="Next song.", color=discord.Color.green()))
+            await interaction.response.send_message(embed=discord.Embed(description="Next song.", color=discord.Color.blue()))
 
             currently_playing = await song_queue.get()
             print(currently_playing)
             os.remove(currently_playing[0]) 
             os.remove(currently_playing[1]) 
     else:
-        await interaction.response.send_message(embed=discord.Embed(description="The bot is not connected to a voice channel.", color=discord.Color.red()))
+        await interaction.response.send_message(embed=discord.Embed(description="This bot is not connected to a voice channel.", color=discord.Color.red()))
 
 @bot.tree.command(
-    name="disconnect",
-    description="Stops currently playing music and disconnects from the call.")
+    name="stop",
+    description="Stops all currently playing music and disconnects.")
 async def disconnect(interaction: discord.Interaction):
     voice_client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
     
@@ -184,9 +176,10 @@ async def disconnect(interaction: discord.Interaction):
                 print(f"Failed to delete {file_path}: {e}")
 
         await voice_client.disconnect()
-        await interaction.response.send_message(embed=discord.Embed(description="Disconnected from the voice channel and cleared the queue.", color=discord.Color.red()))
+        await interaction.response.send_message(embed=discord.Embed(description="Playback has been stopped and the queue has been cleared.", color=discord.Color.orange()))
+        await bot.change_presence(status=discord.Status.idle, activity=discord.Game('that old record on the shelf'))
     else:
-        await interaction.response.send_message("You must be connected to a voice channel to use this command.")
+        await interaction.response.send_message(embed=discord.Embed(description="You must be connected to a voice channel first.", color=discord.Color.red()))
     global disconnect
     disconnect = 1
 

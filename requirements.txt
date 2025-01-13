@@ -1,4 +1,4 @@
 yt-dlp
 pynacl
 discord.py
-audioop-lts
+audioop-lts; python_version>='3.13'

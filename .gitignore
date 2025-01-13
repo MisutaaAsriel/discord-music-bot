@@ -1,3 +1,5 @@
 launch
 launch.sh
 .[Dd][Ss]_[Ss][Tt][Oo][Rr][Ee]
+.venv/
+.python_version

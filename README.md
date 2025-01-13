@@ -7,9 +7,8 @@
 
 ## <a id="commands"></a>Commands
 - Play: The play command takes a YouTube URL as an argument and plays the song in the voice channel that the bot is connected to.
-- Disconnect: The disconnect command disconnects the bot from the voice channel.
 - Skip: The skip command skips the current song.
-- Stop: Stops the current playback in the connected channel.
+- Stop: Stops the current playback in the connected channel and disconnects.
 
 ## <a id="notes"></a>Notes
 The bot will automatically delete the cached file of a played song after it ends. This is to prevent the file from taking up too much space on the bot's hard drive.
@@ -50,6 +49,7 @@ python bot.py
 - 1.0.1: Added the ability to skip songs.
 - 1.0.2: Added the ability to delete files after songs end.
 - 1.0.3: Added new `stop` command, command descriptions; and improved YT-DLP options for greater stability.
+- 1.0.4: Added new bot status messages, combined `disconnect` with `stop`.
 
 ## <a id="terms"></a>Terms
 This script is for educational purposes only. Use it at your own risk. The developer is not responsible for any damage caused by the misuse of this script.
