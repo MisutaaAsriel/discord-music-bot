@@ -135,7 +135,7 @@ async def play(interaction: discord.Interaction, url: str):
                 print(f"Error: {e}")
                 return
             embed = discord.Embed(
-                title="Now Playing:",
+                title="Up Next:",
                 description=f"**Title:** {info.get('title', 'Unknown')}\n"
                             f"**Creator:** {info.get('uploader', 'Unknown')}\n"
                             f"**Duration:** {info.get('duration', 0):.0f} seconds\n"
