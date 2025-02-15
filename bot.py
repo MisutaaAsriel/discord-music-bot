@@ -147,7 +147,7 @@ async def play(interaction: discord.Interaction, url: str):
             if info.get('thumbnail'):
                 embed.set_image(url=info['thumbnail'])
             await interaction.response.send_message(embed=embed)
-            await bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{info.get('title', 'Unknown')} in {voice_channel.name}'))
+            await bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{info.get("title", "Unknown")} in {voice_channel.name}'))
 
             try:
                 audio_file_info = await asyncio.get_event_loop().run_in_executor(
